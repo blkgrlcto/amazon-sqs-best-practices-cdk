@@ -1,0 +1,883 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "SqsBlogStack": {
+        "id": "SqsBlogStack",
+        "path": "SqsBlogStack",
+        "children": {
+          "InventoryFunctionRole": {
+            "id": "InventoryFunctionRole",
+            "path": "SqsBlogStack/InventoryFunctionRole",
+            "children": {
+              "ImportInventoryFunctionRole": {
+                "id": "ImportInventoryFunctionRole",
+                "path": "SqsBlogStack/InventoryFunctionRole/ImportInventoryFunctionRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.76.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryFunctionRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "description": "Role for Lambda functions",
+                    "roleName": "InventoryFunctionRole",
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.76.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "SqsBlogStack/InventoryFunctionRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SqsBlogStack/InventoryFunctionRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "arn:aws:logs:*:*:*"
+                            },
+                            {
+                              "Action": [
+                                "sqs:DeleteMessage",
+                                "sqs:GetQueueAttributes",
+                                "sqs:ReceiveMessage"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "InventoryUpdatesQueue278680F5",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": [
+                                "xray:PutTelemetryRecords",
+                                "xray:PutTraceSegments"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "*"
+                            },
+                            {
+                              "Action": [
+                                "s3:GetBucket*",
+                                "s3:GetObject*",
+                                "s3:List*"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "InventoryUpdatesBucketFEAD6D23",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      {
+                                        "Fn::GetAtt": [
+                                          "InventoryUpdatesBucketFEAD6D23",
+                                          "Arn"
+                                        ]
+                                      },
+                                      "/*"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "Action": [
+                                "dynamodb:BatchGetItem",
+                                "dynamodb:BatchWriteItem",
+                                "dynamodb:ConditionCheckItem",
+                                "dynamodb:DeleteItem",
+                                "dynamodb:DescribeTable",
+                                "dynamodb:GetItem",
+                                "dynamodb:GetRecords",
+                                "dynamodb:GetShardIterator",
+                                "dynamodb:PutItem",
+                                "dynamodb:Query",
+                                "dynamodb:Scan",
+                                "dynamodb:UpdateItem"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": [
+                                {
+                                  "Fn::GetAtt": [
+                                    "InventoryUpdates8C5B878A",
+                                    "Arn"
+                                  ]
+                                },
+                                {
+                                  "Ref": "AWS::NoValue"
+                                }
+                              ]
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "InventoryFunctionRoleDefaultPolicyA6AB5999",
+                        "roles": [
+                          {
+                            "Ref": "InventoryFunctionRoleF91DFE4E"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.76.0"
+            }
+          },
+          "InventoryUpdatesDlq": {
+            "id": "InventoryUpdatesDlq",
+            "path": "SqsBlogStack/InventoryUpdatesDlq",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryUpdatesDlq/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ],
+                    "visibilityTimeout": 300
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sqs.Queue",
+              "version": "2.76.0"
+            }
+          },
+          "InventoryUpdatesQueue": {
+            "id": "InventoryUpdatesQueue",
+            "path": "SqsBlogStack/InventoryUpdatesQueue",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryUpdatesQueue/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SQS::Queue",
+                  "aws:cdk:cloudformation:props": {
+                    "redrivePolicy": {
+                      "deadLetterTargetArn": {
+                        "Fn::GetAtt": [
+                          "InventoryUpdatesDlq1BD67306",
+                          "Arn"
+                        ]
+                      },
+                      "maxReceiveCount": 5
+                    },
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ],
+                    "visibilityTimeout": 300
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.CfnQueue",
+                  "version": "2.76.0"
+                }
+              },
+              "Policy": {
+                "id": "Policy",
+                "path": "SqsBlogStack/InventoryUpdatesQueue/Policy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SqsBlogStack/InventoryUpdatesQueue/Policy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::SQS::QueuePolicy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sqs:SendMessage",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "AWS": {
+                                  "Fn::GetAtt": [
+                                    "InventoryFunctionRoleF91DFE4E",
+                                    "Arn"
+                                  ]
+                                }
+                              },
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "InventoryUpdatesQueue278680F5",
+                                  "Arn"
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "queues": [
+                          {
+                            "Ref": "InventoryUpdatesQueue278680F5"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_sqs.CfnQueuePolicy",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sqs.QueuePolicy",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sqs.Queue",
+              "version": "2.76.0"
+            }
+          },
+          "InventoryUpdates": {
+            "id": "InventoryUpdates",
+            "path": "SqsBlogStack/InventoryUpdates",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryUpdates/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "keySchema": [
+                      {
+                        "attributeName": "id",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "id",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.76.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "SqsBlogStack/InventoryUpdates/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.76.0"
+            }
+          },
+          "InventoryUpdatesBucket": {
+            "id": "InventoryUpdatesBucket",
+            "path": "SqsBlogStack/InventoryUpdatesBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryUpdatesBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.76.0"
+                }
+              },
+              "Notifications": {
+                "id": "Notifications",
+                "path": "SqsBlogStack/InventoryUpdatesBucket/Notifications",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SqsBlogStack/InventoryUpdatesBucket/Notifications/Resource",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.4.2"
+                }
+              },
+              "AllowBucketNotificationsToSqsBlogStackCSVProcessingToSQSFunction38D76D39": {
+                "id": "AllowBucketNotificationsToSqsBlogStackCSVProcessingToSQSFunction38D76D39",
+                "path": "SqsBlogStack/InventoryUpdatesBucket/AllowBucketNotificationsToSqsBlogStackCSVProcessingToSQSFunction38D76D39",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "CSVProcessingToSQSFunction2609C743",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "s3.amazonaws.com",
+                    "sourceAccount": {
+                      "Ref": "AWS::AccountId"
+                    },
+                    "sourceArn": {
+                      "Fn::GetAtt": [
+                        "InventoryUpdatesBucketFEAD6D23",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.76.0"
+            }
+          },
+          "CSVProcessingToSQSFunction": {
+            "id": "CSVProcessingToSQSFunction",
+            "path": "SqsBlogStack/CSVProcessingToSQSFunction",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "SqsBlogStack/CSVProcessingToSQSFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "SqsBlogStack/CSVProcessingToSQSFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.76.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "SqsBlogStack/CSVProcessingToSQSFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.76.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/CSVProcessingToSQSFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "3ec5513ee6fb5cd3f8d08d966f2d460b8159081e732e155d9408fa1452c028d7.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "InventoryFunctionRoleF91DFE4E",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "SQS_QUEUE_URL": {
+                          "Ref": "InventoryUpdatesQueue278680F5"
+                        }
+                      }
+                    },
+                    "handler": "CSVProcessingToSQSFunction.lambda_handler",
+                    "runtime": "python3.8",
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ],
+                    "tracingConfig": {
+                      "mode": "Active"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.76.0"
+            }
+          },
+          "BucketNotificationsHandler050a0587b7544547bf325f094a3db834": {
+            "id": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834",
+            "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834",
+            "children": {
+              "Role": {
+                "id": "Role",
+                "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role",
+                "children": {
+                  "ImportRole": {
+                    "id": "ImportRole",
+                    "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/ImportRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.76.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.76.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "s3:PutBucketNotification",
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+                            "roles": [
+                              {
+                                "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.76.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.76.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "InventoryUpdatesTopic": {
+            "id": "InventoryUpdatesTopic",
+            "path": "SqsBlogStack/InventoryUpdatesTopic",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/InventoryUpdatesTopic/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.76.0"
+            }
+          },
+          "OldInventoryUpdatesAlarm": {
+            "id": "OldInventoryUpdatesAlarm",
+            "path": "SqsBlogStack/OldInventoryUpdatesAlarm",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/OldInventoryUpdatesAlarm/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::CloudWatch::Alarm",
+                  "aws:cdk:cloudformation:props": {
+                    "comparisonOperator": "GreaterThanOrEqualToThreshold",
+                    "evaluationPeriods": 1,
+                    "alarmActions": [
+                      {
+                        "Ref": "InventoryUpdatesTopic4039DDB4"
+                      }
+                    ],
+                    "alarmName": "OldInventoryUpdatesAlarm",
+                    "dimensions": [
+                      {
+                        "name": "QueueName",
+                        "value": {
+                          "Fn::GetAtt": [
+                            "InventoryUpdatesQueue278680F5",
+                            "QueueName"
+                          ]
+                        }
+                      }
+                    ],
+                    "metricName": "ApproximateAgeOfOldestMessage",
+                    "namespace": "AWS/SQS",
+                    "period": 300,
+                    "statistic": "Maximum",
+                    "threshold": 600
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.CfnAlarm",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_cloudwatch.Alarm",
+              "version": "2.76.0"
+            }
+          },
+          "SQSToDynamoDBFunction": {
+            "id": "SQSToDynamoDBFunction",
+            "path": "SqsBlogStack/SQSToDynamoDBFunction",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "SqsBlogStack/SQSToDynamoDBFunction/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "SqsBlogStack/SQSToDynamoDBFunction/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.76.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "SqsBlogStack/SQSToDynamoDBFunction/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.76.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SqsBlogStack/SQSToDynamoDBFunction/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "3ec5513ee6fb5cd3f8d08d966f2d460b8159081e732e155d9408fa1452c028d7.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "InventoryFunctionRoleF91DFE4E",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "DYNAMODB_TABLE_NAME": {
+                          "Ref": "InventoryUpdates8C5B878A"
+                        }
+                      }
+                    },
+                    "handler": "SQSToDynamoDBFunction.lambda_handler",
+                    "runtime": "python3.8",
+                    "tags": [
+                      {
+                        "key": "department",
+                        "value": "inventory"
+                      }
+                    ],
+                    "tracingConfig": {
+                      "mode": "Active"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.76.0"
+                }
+              },
+              "MyQueueTrigger": {
+                "id": "MyQueueTrigger",
+                "path": "SqsBlogStack/SQSToDynamoDBFunction/MyQueueTrigger",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SqsBlogStack/SQSToDynamoDBFunction/MyQueueTrigger/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::EventSourceMapping",
+                      "aws:cdk:cloudformation:props": {
+                        "functionName": {
+                          "Ref": "SQSToDynamoDBFunction69EA289A"
+                        },
+                        "batchSize": 10,
+                        "eventSourceArn": {
+                          "Fn::GetAtt": [
+                            "InventoryUpdatesQueue278680F5",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnEventSourceMapping",
+                      "version": "2.76.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.EventSourceMapping",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.76.0"
+            }
+          },
+          "S3 Bucket Name": {
+            "id": "S3 Bucket Name",
+            "path": "SqsBlogStack/S3 Bucket Name",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.76.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "SqsBlogStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "SqsBlogStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.76.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "SqsBlogStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.76.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.4.2"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "SqsBlogStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.76.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "SqsBlogStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.76.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.76.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.4.2"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.76.0"
+    }
+  }
+}

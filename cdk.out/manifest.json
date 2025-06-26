@@ -1,0 +1,178 @@
+{
+  "version": "31.0.0",
+  "artifacts": {
+    "SqsBlogStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "SqsBlogStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "SqsBlogStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "SqsBlogStack.template.json",
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/bd6ebe172ed6e09539d151c967c051c23f4c61fe518bd81edd63b06b569126aa.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "SqsBlogStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "SqsBlogStack.assets"
+      ],
+      "metadata": {
+        "/SqsBlogStack/InventoryFunctionRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryFunctionRoleF91DFE4E"
+          }
+        ],
+        "/SqsBlogStack/InventoryFunctionRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryFunctionRoleDefaultPolicyA6AB5999"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesDlq/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesDlq1BD67306"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesQueue278680F5"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesQueue/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesQueuePolicy472E17AB"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdates/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdates8C5B878A"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesBucketFEAD6D23"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesBucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesBucketNotificationsBB1CD718"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesBucket/AllowBucketNotificationsToSqsBlogStackCSVProcessingToSQSFunction38D76D39": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesBucketAllowBucketNotificationsToSqsBlogStackCSVProcessingToSQSFunction38D76D397CB65CB9"
+          }
+        ],
+        "/SqsBlogStack/CSVProcessingToSQSFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CSVProcessingToSQSFunction2609C743"
+          }
+        ],
+        "/SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ],
+        "/SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36"
+          }
+        ],
+        "/SqsBlogStack/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691"
+          }
+        ],
+        "/SqsBlogStack/InventoryUpdatesTopic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "InventoryUpdatesTopic4039DDB4"
+          }
+        ],
+        "/SqsBlogStack/OldInventoryUpdatesAlarm/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OldInventoryUpdatesAlarmE1446499"
+          }
+        ],
+        "/SqsBlogStack/SQSToDynamoDBFunction/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SQSToDynamoDBFunction69EA289A"
+          }
+        ],
+        "/SqsBlogStack/SQSToDynamoDBFunction/MyQueueTrigger/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SQSToDynamoDBFunctionMyQueueTrigger7EA3454D"
+          }
+        ],
+        "/SqsBlogStack/S3 Bucket Name": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "S3BucketName"
+          }
+        ],
+        "/SqsBlogStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/SqsBlogStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/SqsBlogStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/SqsBlogStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "SqsBlogStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}
