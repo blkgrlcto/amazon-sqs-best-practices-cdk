@@ -52,4 +52,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: test
         run: |
           pip3 install boto3 pytest
-          pytest --disable-warnings
+          pytest
