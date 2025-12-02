@@ -1,4 +1,4 @@
-﻿product_id,location,quantity,update_date
+product_id,location,quantity,update_date
 P001,Warehouse A,100,2023-05-01
 P002,Warehouse B,25,2023-05-02
 P003,Warehouse C,50,2023-05-03
@@ -20,5 +20,3 @@ P0018,Warehouse C,50,2023-05-03
 P0019,Warehouse A,100,2023-05-01
 P0020,Warehouse B,25,2023-05-02
 P0021,Warehouse C,50,2023-05-03
-P0021,Warehouse C,50,2023-05-03
-
